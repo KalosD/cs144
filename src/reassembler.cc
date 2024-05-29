@@ -14,7 +14,8 @@ auto Reassembler::split( uint64_t pos ) noexcept
   if ( it == buffer_.begin() ){
     return it;
   }
-  if ( const auto pit { prev( it ) }; pit->first + size( pit->second ) > pos ){
+  const auto pit { prev( it ) }; 
+  if ( pit->first + size( pit->second ) > pos ){
     const auto res = buffer_.emplace_hint(it, pos, pit->second.substr(pos - pit->first));
     pit->second.resize(pos - pit->first);
     return res;
