@@ -81,4 +81,21 @@ private:
 
   // Datagrams that have been received
   std::queue<InternetDatagram> datagrams_received_ {};
+
+  auto make_arp( uint16_t, const EthernetAddress&, uint32_t ) const noexcept -> ARPMessage;
+
+  static constexpr size_t ARP_ENTRY_TTL_ms { 30'000 };
+  static constexpr size_t ARP_RESPONSE_TTL_ms { 5'000 };
+
+  struct Timer
+  {
+    size_t _ms {};
+    constexpr Timer& tick( const size_t& ms_since_last_tick ) noexcept { return _ms += ms_since_last_tick, *this; }
+    [[nodiscard]] constexpr bool expired( const size_t& TTL_ms ) const noexcept { return _ms >= TTL_ms; }
+  };
+
+  using AddressNumeric = decltype( ip_address_.ipv4_numeric() );
+  std::unordered_map<AddressNumeric, std::vector<InternetDatagram>> dgrams_waitting_ {};
+  std::unordered_map<AddressNumeric, Timer> waitting_timer_ {};
+  std::unordered_map<AddressNumeric, std::pair<EthernetAddress, Timer>> ARP_cache_ {};
 };
