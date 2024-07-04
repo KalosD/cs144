@@ -1,10 +1,17 @@
 #pragma once
 
-#include <queue>
-
 #include "address.hh"
+#include "arp_message.hh"
 #include "ethernet_frame.hh"
+#include "ethernet_header.hh"
 #include "ipv4_datagram.hh"
+
+#include <cstddef>
+#include <cstdint>
+#include <queue>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 // A "network interface" that connects IP (the internet layer, or network layer)
 // with Ethernet (the network access layer, or link layer).
