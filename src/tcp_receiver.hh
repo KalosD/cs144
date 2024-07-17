@@ -27,5 +27,5 @@ public:
 
 private:
   Reassembler reassembler_;
-  std::optional<Wrap32> zero_point_ {};
+  std::optional<Wrap32> zero_point_ {}; // 用于相对序号到绝对序号的映射
 };

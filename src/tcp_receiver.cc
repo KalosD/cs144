@@ -4,6 +4,7 @@ using namespace std;
 
 void TCPReceiver::receive( TCPSenderMessage message )
 {
+  // 接收 TCPSenderMessage，并将其有效的插入到 Reassembler 中。
   if ( writer().has_error() ) {
     return;
   }
@@ -27,9 +28,8 @@ void TCPReceiver::receive( TCPSenderMessage message )
 
 TCPReceiverMessage TCPReceiver::send() const
 {
-  const uint16_t window_size { writer().available_capacity() > UINT16_MAX
-                                 ? static_cast<uint16_t>( UINT16_MAX )
-                                 : static_cast<uint16_t>( writer().available_capacity() ) };
+  const uint16_t window_size { writer().available_capacity() > UINT16_MAX 
+                               ? static_cast<uint16_t>( UINT16_MAX ) : static_cast<uint16_t>( writer().available_capacity() ) };
   if ( zero_point_.has_value() ) {
     const uint64_t ack_for_seqno { writer().bytes_pushed() + 1 + static_cast<uint64_t>( writer().is_closed() ) };
     return { Wrap32::wrap( ack_for_seqno, zero_point_.value() ), window_size, writer().has_error() };
