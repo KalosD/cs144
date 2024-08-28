@@ -6,23 +6,37 @@
 
 #include <cstdint>
 #include <functional>
-#include <list>
-#include <memory>
-#include <optional>
 #include <queue>
 
+// 重传计时器类，用于管理TCP重传超时（RTO）
 class RetransmissionTimer
 {
 public:
+  // 构造函数，初始化重传超时（RTO）计时器
   explicit RetransmissionTimer( uint64_t initial_RTO_ms ) : RTO_ms_( initial_RTO_ms ) {}
 
+  // 检查计时器是否激活
   [[nodiscard]] constexpr auto is_active() const noexcept -> bool { return is_active_; }
+
+  // 检查计时器是否过期
   [[nodiscard]] constexpr auto is_expired() const noexcept -> bool { return is_active_ and timer_ >= RTO_ms_; }
+
+  // 重置计时器
   constexpr auto reset() noexcept -> void { timer_ = 0; }
+
+  // 发生指数退避时，成倍增加RTO
   constexpr auto exponential_backoff() noexcept -> void { RTO_ms_ *= 2; }
+
+  // 重新加载RTO并重置计时器
   constexpr auto reload( uint64_t initial_RTO_ms ) noexcept -> void { RTO_ms_ = initial_RTO_ms, reset(); };
+
+  // 启动计时器并重置
   constexpr auto start() noexcept -> void { is_active_ = true, reset(); }
+
+  // 停止计时器并重置
   constexpr auto stop() noexcept -> void { is_active_ = false, reset(); }
+
+  // 每次时间流逝时更新计时器
   constexpr auto tick( uint64_t ms_since_last_tick ) noexcept -> RetransmissionTimer&
   {
     timer_ += is_active_ ? ms_since_last_tick : 0;
@@ -30,11 +44,12 @@ public:
   }
 
 private:
-  bool is_active_ {};
-  uint64_t RTO_ms_;
-  uint64_t timer_ {};
+  bool is_active_ {}; // 计时器是否激活
+  uint64_t RTO_ms_;   // 重传超时时间
+  uint64_t timer_ {}; // 当前计时器值
 };
 
+// TCP发送器类，用于管理TCP发送逻辑
 class TCPSender
 {
 public:
@@ -44,7 +59,7 @@ public:
   {}
 
   /* Generate an empty TCPSenderMessage */
-  TCPSenderMessage make_empty_message() const;
+  [[nodiscard]] TCPSenderMessage make_empty_message() const;
 
   /* Receive and process a TCPReceiverMessage from the peer's receiver */
   void receive( const TCPReceiverMessage& msg );
@@ -59,30 +74,31 @@ public:
   void tick( uint64_t ms_since_last_tick, const TransmitFunction& transmit );
 
   // Accessors
-  uint64_t sequence_numbers_in_flight() const;  // How many sequence numbers are outstanding?
-  uint64_t consecutive_retransmissions() const; // How many consecutive *re*transmissions have happened?
+  [[nodiscard]] uint64_t sequence_numbers_in_flight() const; // How many sequence numbers are outstanding?
+  [[nodiscard]] uint64_t consecutive_retransmissions()
+    const; // How many consecutive *re*transmissions have happened?
   Writer& writer() { return input_.writer(); }
-  const Writer& writer() const { return input_.writer(); }
+  [[nodiscard]] const Writer& writer() const { return input_.writer(); }
 
   // Access input stream reader, but const-only (can't read from outside)
-  const Reader& reader() const { return input_.reader(); }
+  [[nodiscard]] const Reader& reader() const { return input_.reader(); }
 
 private:
-  // Variables initialized in constructor
-  ByteStream input_;
-  Wrap32 isn_;
-  uint64_t initial_RTO_ms_;
+  // 在构造函数中初始化的变量
+  ByteStream input_;        // 输入字节流
+  Wrap32 isn_;              // 初始序列号
+  uint64_t initial_RTO_ms_; // 初始重传超时时间
 
-  RetransmissionTimer timer_;
+  RetransmissionTimer timer_; // 重传计时器
 
-  bool SYN_sent_ {};
-  bool FIN_sent_ {};
+  bool SYN_sent_ {}; // 是否发送了SYN
+  bool FIN_sent_ {}; // 是否发送了FIN
 
-  uint64_t next_abs_seqno_ {};
-  uint64_t ack_abs_seqno_ {};
-  uint16_t window_size_ { 1 };
-  std::queue<TCPSenderMessage> outstanding_message_ {};
+  uint64_t next_abs_seqno_ {};                          // 下一个绝对序列号
+  uint64_t ack_abs_seqno_ {};                           // 已确认的绝对序列号
+  uint16_t window_size_ { 1 };                          // 当前窗口大小
+  std::queue<TCPSenderMessage> outstanding_message_ {}; // 未确认的消息队列
 
-  uint64_t total_outstanding_ {};
-  uint64_t total_retransmission_ {};
+  uint64_t total_outstanding_ {};    // 总未确认的字节数
+  uint64_t total_retransmission_ {}; // 总重传次数
 };

@@ -2,6 +2,7 @@
 
 using namespace std;
 
+// WrappingInt32 加法运算
 Wrap32 Wrap32::wrap( uint64_t n, Wrap32 zero_point )
 {
   return zero_point + static_cast<uint32_t>(n);

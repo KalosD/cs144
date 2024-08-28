@@ -1,10 +1,8 @@
 #include "byte_stream.hh"
 
-#include <iostream>
-
 using namespace std;
 
-ByteStream::ByteStream( uint64_t capacity ) : capacity_(capacity) {}
+ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
 
 bool Writer::is_closed() const
 {
@@ -12,17 +10,17 @@ bool Writer::is_closed() const
 }
 
 void Writer::push( string data )
-{  
+{
   // queue实现buffer
   if ( Writer::is_closed() || Writer::available_capacity() == 0 || data.empty() ) {
     return;
   }
-  if(data.size() > Writer::available_capacity()) {
-    data.resize(Writer::available_capacity());
+  if ( data.size() > Writer::available_capacity() ) {
+    data.resize( Writer::available_capacity() );
   }
   total_buffered_ += data.size();
   total_pushed_ += data.size();
-  stream_.emplace(data);
+  stream_.emplace( data );
 }
 
 void Writer::close()
@@ -32,7 +30,7 @@ void Writer::close()
 
 uint64_t Writer::available_capacity() const
 {
-  return capacity_ - total_buffered_ ;
+  return capacity_ - total_buffered_;
 }
 
 uint64_t Writer::bytes_pushed() const
@@ -60,9 +58,9 @@ void Reader::pop( uint64_t len )
 {
   total_buffered_ -= len;
   total_popped_ += len;
-  while(len != 0U){
+  while ( len != 0U ) {
     const uint64_t size = stream_.front().size() - removed_prefix_;
-    if(len < size){
+    if ( len < size ) {
       removed_prefix_ += len;
       break;
     }

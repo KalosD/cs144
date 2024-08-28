@@ -3,8 +3,6 @@
 #include "byte_stream.hh"
 #include "common.hh"
 
-#include <concepts>
-#include <optional>
 #include <utility>
 
 static_assert( sizeof( Reader ) == sizeof( ByteStream ),

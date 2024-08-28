@@ -8,17 +8,17 @@ using namespace std;
 auto Reassembler::split( uint64_t pos ) noexcept
 {
   // 在 buffer_ 中找到或创建一个新的分段位置，确保插入的新数据段不会与已有的数据段重叠
-  auto it { buffer_.lower_bound( pos ) };   // iterator
-  if ( it != buffer_.end() and it->first == pos ){
+  auto it { buffer_.lower_bound( pos ) }; // iterator
+  if ( it != buffer_.end() and it->first == pos ) {
     return it;
   }
-  if ( it == buffer_.begin() ){
+  if ( it == buffer_.begin() ) {
     return it;
   }
-  const auto pit { prev( it ) }; 
-  if ( pit->first + size( pit->second ) > pos ){
-    const auto res = buffer_.emplace_hint(it, pos, pit->second.substr(pos - pit->first));
-    pit->second.resize(pos - pit->first);
+  const auto pit { prev( it ) };
+  if ( pit->first + size( pit->second ) > pos ) {
+    const auto res = buffer_.emplace_hint( it, pos, pit->second.substr( pos - pit->first ) );
+    pit->second.resize( pos - pit->first );
     return res;
   }
   return it;

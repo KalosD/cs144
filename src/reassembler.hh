@@ -30,6 +30,17 @@ public:
    *
    * The Reassembler should close the stream after writing the last byte.
    */
+  /*
+   * 插入一个新的子字符串以重新组装成 ByteStream。
+   * `first_index`：子字符串第一个字节的索引
+   * `data`：子字符串本身
+   * `is_last_substring`：此子字符串代表流的结尾
+   * `output`：对 Writer 的可变引用
+   * 重组器的工作是将索引子字符串（可能无序且可能重叠）重新组合回原始字节流。重组器一旦获悉流中的下一个字节，就应将其写入输出。
+   * 如果重组器了解到适合流可用容量但尚未写入的字节（因为较早的字节仍然未知），它应该在内部存储它们，直到填补空白。
+   * 重组器应该丢弃超出流可用容量的所有字节（即，即使早期的空白被填补，也无法写入的字节）。
+   * 重组器应在写入最后一个字节后关闭流。
+   */
   void insert( uint64_t first_index, std::string data, bool is_last_substring );
 
   // How many bytes are stored in the Reassembler itself?
@@ -51,5 +62,4 @@ private:
   std::optional<uint64_t> end_index_ {};
 
   auto split( uint64_t pos ) noexcept;
-  
 };
