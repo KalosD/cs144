@@ -8,7 +8,7 @@
 #include <functional>
 #include <queue>
 
-// 重传计时器类，用于管理TCP重传超时（RTO）
+// 重传计时器类，用于管理TCP超时重传（RTO）
 class RetransmissionTimer
 {
 public:

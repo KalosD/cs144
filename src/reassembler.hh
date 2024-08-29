@@ -56,10 +56,10 @@ public:
 private:
   ByteStream output_; // the Reassembler writes to this ByteStream
 
-  std::map<uint64_t, std::string> buffer_ {};
-  uint64_t total_pending_ {};
+  std::map<uint64_t, std::string> buffer_ {}; // map类型缓冲区, 有序存储那些已接收到但还不能立即写入输出的子字符串
+  uint64_t total_pending_ {}; // 记录当前缓冲区中待处理字节的总数
 
-  std::optional<uint64_t> end_index_ {};
+  std::optional<uint64_t> end_index_ {};  // 标记流的结尾字节位置。一旦最后一个子字符串到达，end_index_将被设置为字节流的总长度
 
   auto split( uint64_t pos ) noexcept;
 };

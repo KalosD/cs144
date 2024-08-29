@@ -67,7 +67,7 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     end_index_.emplace( first_index + size( data ) );
   }
 
-  // Can be optimizated !!!
+  // Can be optimizated
   // 在 buffer_ 中插入和合并数据段
   const auto upper { split( first_index + size( data ) ) };
   const auto lower { split( first_index ) };
