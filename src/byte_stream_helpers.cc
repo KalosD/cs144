@@ -4,8 +4,8 @@
 #include <stdexcept>
 
 /*
- * read: 一个辅助函数，用于从 ByteStream 的 Reader 中读取最多 `len` 字节到一个字符串中；
- * 它会首先清空输出字符串 `out`，然后尝试从 Reader 中提取字节并添加到 `out` 中，直到满足所需的长度 `len` 或者 Reader 中没有更多数据。
+ * read: 一个辅助函数，用于从 ByteStream 的 Reader 中读取最多 len 字节到一个字符串中；
+ * 它会首先清空输出字符串 out，然后尝试从 Reader 中提取字节并添加到 out 中，直到满足所需的长度 len 或者 Reader 中没有更多数据。
  */
 void read( Reader& reader, uint64_t len, std::string& out )
 {

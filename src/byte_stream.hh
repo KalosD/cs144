@@ -76,10 +76,10 @@ public:
 class Reader : public ByteStream
 {
 public:
-  // 查看缓冲区中的下一个字节，但不移除它们
+  // 查看ByteStream队列中第一个字符串的视图，并跳过已移除的前缀部分，但不移除它们
   std::string_view peek() const;
 
-  // 从缓冲区中移除 `len` 个字节
+  // 从缓冲区中移除 len 个字节
   void pop( uint64_t len );
 
   // 检查流是否已完成（关闭并且所有字节已被弹出）
@@ -93,7 +93,7 @@ public:
 };
 
 /*
- * read: 一个辅助函数，用于从 ByteStream 的 Reader 中读取最多 `len` 字节的数据，并将其存储在输出字符串 `out` 中。
+ * read: 一个辅助函数，用于从 ByteStream 的 Reader 中读取最多 len 字节的数据，并将其存储在输出字符串 out 中。
  * 它会不断从 Reader 中获取数据直到满足所需的长度或者 Reader 中没有更多数据。
  */
 void read( Reader& reader, uint64_t len, std::string& out );

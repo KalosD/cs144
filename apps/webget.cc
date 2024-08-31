@@ -10,7 +10,7 @@ using namespace std;
 void get_URL( const string& host, const string& path )
 {
   Address addr(host, "http");
-  auto tcp_soc = CS144TCPSocket();
+  auto tcp_soc = TCPSocket();
   tcp_soc.connect(addr);
   tcp_soc.write("GET " + path + " HTTP/1.1\r\n");
   tcp_soc.write("Host: " + host + "\r\n");

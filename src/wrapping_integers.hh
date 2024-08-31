@@ -3,6 +3,12 @@
 #include <cstdint>
 
 /*
+ * 序列号 seqno，32位，从一个随机数 ISN 开始（防止被猜到，避免攻击），用于填充TCP头部；
+ * 绝对序列号 absolute seqno，64位，从0开始，包含SYN和FIN，64位非循环计数；
+ * 流索引 stream index，64位，从0开始，不包含SYN和FIN，用于流重组器；
+ */
+
+/*
  * The Wrap32 type represents a 32-bit unsigned integer that:
  *    - starts at an arbitrary "zero point" (initial value), and
  *    - wraps back to zero when it reaches 2^32 - 1.
@@ -30,7 +36,7 @@ public:
 
 protected:
   uint32_t raw_value_ {};
-  static constexpr uint64_t MASK_LOW_32 {0x0000'0000'FFFF'FFFF};
-  static constexpr uint64_t MASK_HIGH_32 {0xFFFF'FFFF'0000'0000};
+  static constexpr uint64_t MASK_LOW_32 { 0x0000'0000'FFFF'FFFF };
+  static constexpr uint64_t MASK_HIGH_32 { 0xFFFF'FFFF'0000'0000 };
   static constexpr uint64_t BASE { MASK_LOW_32 + 1 };
 };

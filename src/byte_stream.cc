@@ -15,8 +15,9 @@ void Writer::push( string data )
   if ( Writer::is_closed() || Writer::available_capacity() == 0 || data.empty() ) {
     return;
   }
-  if ( data.size() > Writer::available_capacity() ) {
-    data.resize( Writer::available_capacity() );
+  auto const n = min( Writer::available_capacity(), data.size() );
+  if ( n < data.size() ) {
+    data = data.substr( 0, n );
   }
   total_buffered_ += data.size();
   total_pushed_ += data.size();
